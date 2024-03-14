@@ -46,10 +46,11 @@ def Concatenate_Group_Lists2():
             setToFalse = False
 
 def SupprimerGroupe(GroupIndex):
+    #print(GroupIndex)
     if gameZoneCanvas.itemcget(goban[list_of_groups[GroupIndex][0][1]][list_of_groups[GroupIndex][0][0]], "fill") == "white":
-        JoueurNoirCaptured.config(text=f"{int(JoueurNoirCaptured.cget('text')) + len(list_of_groups[GroupIndex])}")
+        JoueurNoirCaptured.config(text=f"{float(JoueurNoirCaptured.cget('text')) + len(list_of_groups[GroupIndex])}")
     else:
-        JoueurBlancCaptured.config(text=f"{int(JoueurBlancCaptured.cget( 'text')) + len(list_of_groups[GroupIndex])}")
+        JoueurBlancCaptured.config(text=f"{float(JoueurBlancCaptured.cget( 'text')) + len(list_of_groups[GroupIndex])}")
     for i in range(len(list_of_groups[GroupIndex])):
         gameZoneCanvas.delete(goban[list_of_groups[GroupIndex][i][1]][list_of_groups[GroupIndex][i][0]])
         goban[list_of_groups[GroupIndex][i][1]][list_of_groups[GroupIndex][i][0]] = 0
@@ -75,7 +76,8 @@ def Board_Check():
     for i in range(1, len(list_of_groups)):
         list_of_groupsLiberties.append(Sum_Of_a_Group_Liberties(i))
     for i in range(len(list_of_groupsLiberties)):
-        if list_of_groupsLiberties[i] == 0:
+        if list_of_groupsLiberties[i] == 0 and not LastStonePlaced in list_of_groups[i]:
+            print(i, list_of_groups[i])
             if len(list_of_groups)>= i+1:
                 SupprimerGroupe(i+1)
 
@@ -120,8 +122,10 @@ def Changement_de_joueur():
         HuDCanvas.itemconfig(JoueurNoirVisual, width=5)
 
 def Place_Stone_on_given_point(x,y, Xindex, Yindex):
+    global LastStonePlaced
     size = BoardSize/(2*(nb+1))
     goban[Yindex][Xindex] = gameZoneCanvas.create_oval(x-size, y-size, x+size, y+size, fill=joueur)
+    LastStonePlaced = (Xindex, Yindex)
 
 def Find_Coordinate_on_click(clickX, clickY):
     pointX = coordonees[0][0]
@@ -155,9 +159,6 @@ def OnCanvasClick(event):
 def motion(event):
     global ThickLineH, ThickLineV
     lineX, lineY = Find_Coordinate_on_click(event.x, event.y)
-
-    print(gameZoneCanvas.coords(ThickLineV))
-
     if type(ThickLineV) == int and gameZoneCanvas.coords(ThickLineV)[0] != lineX:
         gameZoneCanvas.delete(ThickLineV)
         ThickLineV = gameZoneCanvas.create_line(lineX, BoardSize/(nb+1), lineX, (nb)*(BoardSize)/(nb+1), width=2)
@@ -186,13 +187,11 @@ def on_Window_Resize(event):
 
 def Draw_Window(InputNb):
     global mainWindow, screen_width, screen_height, GameTaskBar,gameZoneCanvas,HuDCanvas, JoueurBlancVisual, JoueurNoirVisual, CapturedStoneText, JoueurNoirCaptured, JoueurBlancCaptured, goban, coordonees, list_of_groups, list_of_groupsLiberties, joueur, nb, BoardSize, WhiteBonus, ThickLineH, ThickLineV
+
     #création de la fenetre
     mainWindow = Tk()
-    #Window_width = 1066
-    #Window_height = 600
-    #mainWindow.geometry(f"{Window_width}x{Window_height}")
     mainWindow.attributes("-fullscreen", True)
-    mainWindow.attributes("-topmost", True)
+    #mainWindow.attributes("-topmost", True)
     mainWindow.update()
     sleep(0.1)
     screen_width = mainWindow.winfo_width()
