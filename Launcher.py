@@ -1,15 +1,15 @@
 from tkinter import *
 from tkinter import scrolledtext
-import main
+import Game
 
 def onBoardSizeChange():
     global BoardSize
     BoardSize = var.get()
 
 def OnPlay():
-    main.Draw_Window(BoardSize)
+    Game.Draw_Window(BoardSize)
     LobbyWindow.destroy()
-    main.MainLoop()
+    Game.MainLoop()
 
 LobbyWindow = Tk()
 xSize = 50

@@ -11,7 +11,7 @@ The `.exe` file doesn't not require anything to function
 The code files require the version [3.10.10](https://www.python.org/downloads/release/python-31011/) as well as the Tkinter and Time librairies installed
 
 ## Usage
-After downloading, open the `.exe` file. The launcher
+After downloading, open the `.exe` file. The launcher will appear, with this `README.md` file to provide explanation. You can select the size of the board, and start the game.
 
 ## Introduction to the Game of Go
 The Go is an abstract strategy board game for two players, in which the aim is to surround more territory than the opponent. The game was invented in China more than 2,500 years ago and is believed to be the oldest board game continuously played to the present day.
