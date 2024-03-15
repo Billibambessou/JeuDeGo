@@ -7,7 +7,7 @@ A simple game of Go coded in python, with a Graphical User Interface (GUI)
 + [Time Python Librairy](https://docs.python.org/3/library/time.html)
 
 ## Requirement
-The `.exe` file doesn't not require anything to function
+The `.exe` file does not require anything to function
 The code files require the version [3.10.10](https://www.python.org/downloads/release/python-31011/) as well as the Tkinter and Time librairies installed
 
 ## Usage
