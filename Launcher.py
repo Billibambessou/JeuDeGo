@@ -12,7 +12,7 @@ def OnPlay():
     Game.MainLoop()
 
 LobbyWindow = Tk()
-xSize = 50
+xSize = 45
 Window_width = 16*xSize
 Window_height = 9*xSize
 LobbyWindow.geometry(f"{Window_width}x{Window_height}")
