@@ -6,8 +6,6 @@ def onBoardSizeChange():
     global BoardSize
     BoardSize = var.get()
 
-
-
 def OnPlay():
     main.Draw_Window(BoardSize)
     LobbyWindow.destroy()
