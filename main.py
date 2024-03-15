@@ -171,7 +171,6 @@ def motion(event):
     if type(ThickLineH) == bool:
         ThickLineH = gameZoneCanvas.create_line(screen_width*0.405-BoardSize/2+(BoardSize)/(nb+1),lineY,screen_width*0.405+BoardSize/2-(BoardSize)/(nb+1),lineY, width =2)
 
-
 def onHuDCanvasClick(event):
     print("click abscisse :",event.x, "click ordonnée :", event.y)
 
@@ -183,7 +182,6 @@ def on_Window_Resize(event):
         print("--------------------------------------------------------------------")
         Window_height = event.height
         Window_width = event.width
-
 
 def Draw_Window(InputNb):
     global mainWindow, screen_width, screen_height, GameTaskBar,gameZoneCanvas,HuDCanvas, JoueurBlancVisual, JoueurNoirVisual, CapturedStoneText, JoueurNoirCaptured, JoueurBlancCaptured, goban, coordonees, list_of_groups, list_of_groupsLiberties, joueur, nb, BoardSize, WhiteBonus, ThickLineH, ThickLineV
@@ -235,17 +233,15 @@ def Draw_Window(InputNb):
     JoueurBlancCaptured.place(x=HuDCanvasWidth*0.65-textFontSize, y=HuDCanvasHeight*0.22)
     JoueurBlancCaptured.config(bg="#a84d11")
 
-
     ButtonPasser = Button(HuDCanvas, text="Skip turn", bg="#a84d11", command=Changement_de_joueur)
     ButtonPasser.place(x=HuDCanvasWidth*0.5-HuDCanvasWidth/146*15, y=HuDCanvasHeight*0.3)
 
+
     #création de la grille
     nb = InputNb #la taille du tableau nb x nb
-
     BoardSize = screen_height*0.95
     if BoardSize >= screen_width*0.81:
         BoardSize = screen_width*0.81
-
     for i in range(nb): #création des lines horizontales
         gameZoneCanvas.create_line(screen_width*0.405-BoardSize/2+(BoardSize)/(nb+1), (i+1)*(BoardSize)/(nb+1), screen_width*0.405-BoardSize/2+nb*(BoardSize)/(nb+1), (i+1)*(BoardSize)/(nb+1))
     for i in range(nb): #création des lines verticales

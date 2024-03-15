@@ -11,7 +11,6 @@ def OnPlay():
     LobbyWindow.destroy()
     main.MainLoop()
 
-
 LobbyWindow = Tk()
 xSize = 50
 Window_width = 16*xSize
