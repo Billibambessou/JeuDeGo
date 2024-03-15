@@ -34,7 +34,7 @@ PlayCanvas.pack(side="left", fill="y")
 
 READMEtext = scrolledtext.ScrolledText(LobbyWindow)
 READMEtext.pack(side="left", fill="both")
-READMEtext.insert(INSERT,f"{open('README.txt', 'r').read()}")
+READMEtext.insert(INSERT,f"{open('README.md', 'r').read()}")
 READMEtext.configure(state ='disabled')
 
 LobbyWindow.mainloop()
