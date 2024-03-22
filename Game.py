@@ -141,6 +141,19 @@ def Find_Coordinate_on_click(clickX, clickY):
             pointY = coordonees[1][i]
     return pointX, pointY
 
+def Skip_Turn():
+    global skipedTurn
+    if not skipedTurn:
+        skipedTurn = True
+        Changement_de_joueur()
+    else:
+        gameZoneCanvas.unbind("<Button-1>")
+        gameZoneCanvas.unbind("<Motion>")
+        gameZoneCanvas.delete(ThickLineV)
+        gameZoneCanvas.delete(ThickLineH)
+        EndGameText.place(x=HuDCanvasWidth * 0.5 - textFontSize * fontToPixelsRatio / 1.9, y=HuDCanvasHeight * 0.34)
+        EndGameText.config(bg="#a84d11")
+
 def OnCanvasClick(event):
     #trouve les coordonées du point le plus près de l'endroit cliqué
     pointX, pointY = Find_Coordinate_on_click(event.x, event.y)
@@ -158,18 +171,12 @@ def OnCanvasClick(event):
 def motion(event):
     global ThickLineH, ThickLineV
     lineX, lineY = Find_Coordinate_on_click(event.x, event.y)
-    if type(ThickLineV) == int and gameZoneCanvas.coords(ThickLineV)[0] != lineX:
-        gameZoneCanvas.delete(ThickLineV)
-        ThickLineV = gameZoneCanvas.create_line(lineX, BoardSize/(nb+1), lineX, (nb)*(BoardSize)/(nb+1), width=2)
-    if type(ThickLineV) == bool:
-        ThickLineV = gameZoneCanvas.create_line(lineX, BoardSize - (nb) * (BoardSize) / (nb + 1), lineX,(nb) * (BoardSize) / (nb + 1), width=2)
-
+    if gameZoneCanvas.coords(ThickLineV)[0] != lineX:
+        gameZoneCanvas.coords(ThickLineV,lineX, BoardSize / (nb + 1), lineX, (nb) * (BoardSize) / (nb + 1))
+        gameZoneCanvas.itemconfig(ThickLineV, state="normal")
     if type(ThickLineH) == int and gameZoneCanvas.coords(ThickLineH)[1] != lineY:
-        gameZoneCanvas.delete(ThickLineH)
-        ThickLineH = gameZoneCanvas.create_line(screen_width * 0.405 - BoardSize / 2 + (BoardSize) / (nb + 1), lineY,screen_width * 0.405 + BoardSize / 2 - (BoardSize) / (nb + 1), lineY,width=2)
-    if type(ThickLineH) == bool:
-        ThickLineH = gameZoneCanvas.create_line(screen_width*0.405-BoardSize/2+(BoardSize)/(nb+1),lineY,screen_width*0.405+BoardSize/2-(BoardSize)/(nb+1),lineY, width =2)
-
+        gameZoneCanvas.coords(ThickLineH, screen_width * 0.405 - BoardSize / 2 + (BoardSize) / (nb + 1), lineY, screen_width * 0.405 + BoardSize / 2 - (BoardSize) / (nb + 1), lineY)
+        gameZoneCanvas.itemconfig(ThickLineH, state="normal")
 def onHuDCanvasClick(event):
     print("click abscisse :",event.x, "click ordonnée :", event.y)
 
@@ -183,7 +190,7 @@ def on_Window_Resize(event):
         Window_width = event.width
 
 def Draw_Window(InputNb):
-    global mainWindow, screen_width, screen_height, GameTaskBar,gameZoneCanvas,HuDCanvas, JoueurBlancVisual, JoueurNoirVisual, CapturedStoneText, JoueurNoirCaptured, JoueurBlancCaptured, goban, coordonees, list_of_groups, list_of_groupsLiberties, joueur, nb, BoardSize, WhiteBonus, ThickLineH, ThickLineV
+    global mainWindow, screen_width, screen_height, GameTaskBar,gameZoneCanvas,HuDCanvas, JoueurBlancVisual, JoueurNoirVisual, CapturedStoneText, JoueurNoirCaptured, JoueurBlancCaptured, goban, coordonees, list_of_groups, list_of_groupsLiberties, joueur, nb, BoardSize, WhiteBonus, ThickLineH, ThickLineV, skipedTurn, EndGameText, HuDCanvasWidth, textFontSize, fontToPixelsRatio, HuDCanvasHeight
 
     #création de la fenetre
     mainWindow = Tk()
@@ -206,6 +213,11 @@ def Draw_Window(InputNb):
     ThickLineV = False
     gameZoneCanvas.grid(row=1, padx=0, pady=0, sticky="nswe")
 
+    ThickLineV = gameZoneCanvas.create_line(0,0,0,0, width=2)
+    gameZoneCanvas.itemconfig(ThickLineV, state="hidden")
+    ThickLineH = gameZoneCanvas.create_line(0,0,0,0, width=2)
+    gameZoneCanvas.itemconfig(ThickLineH, state="hidden")
+
     HuDCanvas = tkinter.Canvas(mainWindow, height=screen_height*0.95, width=screen_width*0.19, bg="#a84d11", bd=-2)
     HuDCanvas.grid(column=2, row=1, padx=0,pady=0, sticky="nswe")
     #HuDCanvas.bind("<Button-1>", onHuDCanvasClick)
@@ -219,6 +231,7 @@ def Draw_Window(InputNb):
     HuDCanvas.create_line(HuDCanvasWidth*0.2, HuDCanvasHeight*0.17, HuDCanvasWidth*0.2, HuDCanvasHeight*0.27) #ligne verticale 1
     HuDCanvas.create_line(HuDCanvasWidth*0.8, HuDCanvasHeight*0.17, HuDCanvasWidth*0.8, HuDCanvasHeight*0.27) #ligne verticale 2
     HuDCanvas.create_line(HuDCanvasWidth*0.5, HuDCanvasHeight*0.21, HuDCanvasWidth*0.5, HuDCanvasHeight*0.27) #ligne verticale 3
+
     textFontSize = int(HuDCanvasWidth*0.3/10)
     fontToPixelsRatio = 100/9
     CapturedStonesText = Label(HuDCanvas, text="Captured Stones", font=("Arial", textFontSize))
@@ -232,9 +245,10 @@ def Draw_Window(InputNb):
     JoueurBlancCaptured.place(x=HuDCanvasWidth*0.65-textFontSize, y=HuDCanvasHeight*0.22)
     JoueurBlancCaptured.config(bg="#a84d11")
 
-    ButtonPasser = Button(HuDCanvas, text="Skip turn", bg="#a84d11", command=Changement_de_joueur)
+    ButtonPasser = Button(HuDCanvas, text="Skip turn", bg="#a84d11", command=Skip_Turn)
     ButtonPasser.place(x=HuDCanvasWidth*0.5-HuDCanvasWidth/146*15, y=HuDCanvasHeight*0.3)
 
+    EndGameText = Label(HuDCanvas, text="The game has ended", font=("Arial", textFontSize))
 
     #création de la grille
     nb = InputNb #la taille du tableau nb x nb
@@ -261,7 +275,7 @@ def Draw_Window(InputNb):
     list_of_groupsLiberties = []
 
     joueur = "black"
-
+    skipedTurn = False
 
 #lancement de la fenetre
 def MainLoop():

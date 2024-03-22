@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import scrolledtext
+from time import sleep
 import Game
 
 def onBoardSizeChange():
@@ -9,6 +10,7 @@ def onBoardSizeChange():
 def OnPlay():
     Game.Draw_Window(BoardSize)
     LobbyWindow.destroy()
+    sleep(1)
     Game.MainLoop()
 
 LobbyWindow = Tk()
