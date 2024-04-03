@@ -150,31 +150,41 @@ def Concatenate_Empty_Groups():
     while setToFalse:
         if i == 0:
             pass
-        ConcatenateBool = False
         ToConcatenate = []
         for j in range(len(emptyPoints[i])):
             itemLiberties = Find_Liberties(emptyPoints[i][j][0], emptyPoints[i][j][1])
-            ConcatenateBool = False
             for k in range(len(itemLiberties)):
                     isLibertieInAnotherGroup = Double_In(emptyPoints[i+1:], itemLiberties[k])
                     if type(isLibertieInAnotherGroup) == int:
-                        if isLibertieInAnotherGroup+i+1 in ToConcatenate:
+                        if not isLibertieInAnotherGroup+i+1 in ToConcatenate:
                             ToConcatenate.append(isLibertieInAnotherGroup+i+1)
-
-        print(f"nouvelle iteration :  i == {i}")
         for j2 in range(len(ToConcatenate)):
-            emptyPoints[i] = emptyPoints[i] + emptyPoints[ToConcatenate[j2][0]]
-        print(emptyPoints)
+            emptyPoints[i] = emptyPoints[i] + emptyPoints[ToConcatenate[j2]]
         for j2 in range(len(ToConcatenate)):
-            print(ToConcatenate[j2][0]-j2, ToConcatenate)
-            emptyPoints.pop(ToConcatenate[j2][0]-j2)
-            print(emptyPoints)
+            emptyPoints.pop(ToConcatenate[j2]-j2)
         i += 1
         if i >= len(emptyPoints):
             setToFalse = False
 
+def Get_Territory_Color():
+    global emptyGroupsColors
+    emptyGroupsColors = []
+    for i in range(len(emptyPoints)):
+        for j in range(len(emptyPoints[i])):
+            tempList = []
+            itemLiberties = Find_Liberties(emptyPoints[i][j][0], emptyPoints[i][j][1])
+            for k in range(len(itemLiberties)):
+                if itemLiberties[k] != 0:
+                    itemColor = gameZoneCanvas.itemcget(goban[itemLiberties[k][1]][itemLiberties[k][0]],"fill")
+                    if len(emptyGroupsColors)-1 >= i and tempList[i] != itemColor:
+                        tempList[i] = "None"
+                    elif len(emptyGroupsColors)-1 < i:
+                        tempList.append(itemColor)
+            emptyGroupsColors.append(tempList)
+
 def Count_Score():
     global emptyPoints
+    print(goban)
     emptyPoints = [[]]
     for i in range(len(goban)):
         for j in range(len(goban[i])):
@@ -182,8 +192,12 @@ def Count_Score():
                 IsStoneInList = Double_In(emptyPoints, (j, i))
                 if not IsStoneInList:
                     emptyPoints.append([(j, i)])
-    for i in range(4):
+    for i in range(nb):
         Concatenate_Empty_Groups()
+    print(emptyPoints)
+    print(len(emptyPoints))
+    Get_Territory_Color()
+    print(emptyGroupsColors)
 
 
 def Skip_Turn():
