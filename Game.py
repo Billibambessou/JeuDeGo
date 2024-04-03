@@ -110,7 +110,8 @@ def Find_Liberties(x,y):
     return liberties
 
 def Changement_de_joueur():
-    global joueur
+    global joueur, skipedTurn
+    skipedTurn = False
     if joueur == "black":
         joueur="white"
         HuDCanvas.itemconfig(JoueurBlancVisual, width=5)
@@ -120,10 +121,12 @@ def Changement_de_joueur():
         HuDCanvas.itemconfig(JoueurBlancVisual, width=0)
         HuDCanvas.itemconfig(JoueurNoirVisual, width=5)
 
-def Place_Stone_on_given_point(x,y, Xindex, Yindex):
+def Place_Stone_on_given_point(x,y, Xindex, Yindex, color=None):
     global LastStonePlaced
+    if color == None:
+        color = joueur
     size = BoardSize/(2*(nb+1))
-    goban[Yindex][Xindex] = gameZoneCanvas.create_oval(x-size, y-size, x+size, y+size, fill=joueur)
+    goban[Yindex][Xindex] = gameZoneCanvas.create_oval(x-size, y-size, x+size, y+size, fill=color)
     LastStonePlaced = (Xindex, Yindex)
 
 def Find_Coordinate_on_click(clickX, clickY):
@@ -141,11 +144,53 @@ def Find_Coordinate_on_click(clickX, clickY):
             pointY = coordonees[1][i]
     return pointX, pointY
 
+def Concatenate_Empty_Groups():
+    setToFalse = True
+    i = 0
+    while setToFalse:
+        if i == 0:
+            pass
+        ConcatenateBool = False
+        ToConcatenate = []
+        for j in range(len(emptyPoints[i])):
+            itemLiberties = Find_Liberties(emptyPoints[i][j][0], emptyPoints[i][j][1])
+            ConcatenateBool = False
+            for k in range(len(itemLiberties)):
+                    isLibertieInAnotherGroup = Double_In(emptyPoints[i+1:], itemLiberties[k])
+                    if type(isLibertieInAnotherGroup) == int:
+                        if isLibertieInAnotherGroup+i+1 in ToConcatenate:
+                            ToConcatenate.append(isLibertieInAnotherGroup+i+1)
+
+        print(f"nouvelle iteration :  i == {i}")
+        for j2 in range(len(ToConcatenate)):
+            emptyPoints[i] = emptyPoints[i] + emptyPoints[ToConcatenate[j2][0]]
+        print(emptyPoints)
+        for j2 in range(len(ToConcatenate)):
+            print(ToConcatenate[j2][0]-j2, ToConcatenate)
+            emptyPoints.pop(ToConcatenate[j2][0]-j2)
+            print(emptyPoints)
+        i += 1
+        if i >= len(emptyPoints):
+            setToFalse = False
+
+def Count_Score():
+    global emptyPoints
+    emptyPoints = [[]]
+    for i in range(len(goban)):
+        for j in range(len(goban[i])):
+            if goban[i][j] == 0:
+                IsStoneInList = Double_In(emptyPoints, (j, i))
+                if not IsStoneInList:
+                    emptyPoints.append([(j, i)])
+    for i in range(4):
+        Concatenate_Empty_Groups()
+
+
 def Skip_Turn():
     global skipedTurn
     if not skipedTurn:
-        skipedTurn = True
         Changement_de_joueur()
+        skipedTurn = True
     else:
         gameZoneCanvas.unbind("<Button-1>")
         gameZoneCanvas.unbind("<Motion>")
@@ -153,6 +198,7 @@ def Skip_Turn():
         gameZoneCanvas.delete(ThickLineH)
         EndGameText.place(x=HuDCanvasWidth * 0.5 - textFontSize * fontToPixelsRatio / 1.9, y=HuDCanvasHeight * 0.34)
         EndGameText.config(bg="#a84d11")
+        Count_Score()
 
 def OnCanvasClick(event):
     #trouve les coordonées du point le plus près de l'endroit cliqué
@@ -160,10 +206,10 @@ def OnCanvasClick(event):
     if goban[coordonees[1].index(pointY)][coordonees[0].index(pointX)] == 0:
         Place_Stone_on_given_point(pointX, pointY, coordonees[0].index(pointX), coordonees[1].index(pointY))
         Board_Check()
-        print("liste des groupes :",list_of_groups)
-        print("liste des libertées de chaque groupe :",list_of_groupsLiberties)
+        #print("liste des groupes :",list_of_groups)
+        #print("liste des libertées de chaque groupe :",list_of_groupsLiberties)
         Changement_de_joueur()
-        print("----------------------FIN DU TOUR-------------------------------")
+        #print("----------------------FIN DU TOUR-------------------------------")
     else:
         Find_Liberties(coordonees[0].index(pointX), coordonees[1].index(pointY))
         print("IL Y A DEJA UNE PIERRE ICI CONNARD")
@@ -204,6 +250,7 @@ def Draw_Window(InputNb):
     GameTaskBar = tkinter.Canvas(mainWindow, height=screen_height*0.05, width=screen_width, bg="blue", bd=-2)
     GameTaskBar.grid(column=0, row=0, columnspan=3, sticky="nswe")
     CloseButton = Button(GameTaskBar, width=f'{int(screen_height*0.003)}', bg="red", text="×", command=mainWindow.destroy).place(x=screen_width-screen_height*0.04, y=screen_height*0.01)
+
 
     #création du canvas de jeu
     gameZoneCanvas = tkinter.Canvas(mainWindow, height=screen_height*0.95, width=screen_width*0.81, bg="#E7C966", bd=-2)
