@@ -45,7 +45,6 @@ def Concatenate_Group_Lists2():
             setToFalse = False
 
 def SupprimerGroupe(GroupIndex):
-    #print(GroupIndex)
     if gameZoneCanvas.itemcget(goban[list_of_groups[GroupIndex][0][1]][list_of_groups[GroupIndex][0][0]], "fill") == "white":
         JoueurNoirCaptured.config(text=f"{float(JoueurNoirCaptured.cget('text')) + len(list_of_groups[GroupIndex])}")
     else:
@@ -170,21 +169,30 @@ def Get_Territory_Color():
     global emptyGroupsColors
     emptyGroupsColors = []
     for i in range(len(emptyPoints)):
+        tempList = []
         for j in range(len(emptyPoints[i])):
-            tempList = []
             itemLiberties = Find_Liberties(emptyPoints[i][j][0], emptyPoints[i][j][1])
             for k in range(len(itemLiberties)):
-                if itemLiberties[k] != 0:
+                if goban[itemLiberties[k][1]][itemLiberties[k][0]] != 0:
                     itemColor = gameZoneCanvas.itemcget(goban[itemLiberties[k][1]][itemLiberties[k][0]],"fill")
-                    if len(emptyGroupsColors)-1 >= i and tempList[i] != itemColor:
+                    if len(tempList)-1 >= i and tempList[i] != itemColor:
                         tempList[i] = "None"
                     elif len(emptyGroupsColors)-1 < i:
                         tempList.append(itemColor)
-            emptyGroupsColors.append(tempList)
+        emptyGroupsColors.append(tempList)
+
+def Clear_Double_List(list):
+    MajorTempList = []
+    for i in range(len(list)):
+        MinorTempList = []
+        for j in range(len(list[i])):
+            if not list[i][j] in MinorTempList:
+                MinorTempList.append(list[i][j])
+        MajorTempList.append(MinorTempList)
+    return MajorTempList
 
 def Count_Score():
     global emptyPoints
-    print(goban)
     emptyPoints = [[]]
     for i in range(len(goban)):
         for j in range(len(goban[i])):
@@ -194,10 +202,21 @@ def Count_Score():
                     emptyPoints.append([(j, i)])
     for i in range(nb):
         Concatenate_Empty_Groups()
-    print(emptyPoints)
-    print(len(emptyPoints))
+    emptyPoints = Clear_Double_List(emptyPoints)
     Get_Territory_Color()
-    print(emptyGroupsColors)
+    for i in range(1, len(emptyGroupsColors)):
+        tempValue = emptyGroupsColors[i][0]
+        for j in range(1, len(emptyGroupsColors[i])):
+            if emptyGroupsColors[i][j] != tempValue:
+                tempValue = "None"
+        emptyGroupsColors[i] = tempValue
+
+    for i in range(1, len(emptyPoints)):
+        if emptyGroupsColors[i] == "black":
+            JoueurNoirCaptured.config(text=f"{float(JoueurNoirCaptured.cget('text')) + len(emptyPoints[i])}")
+        elif emptyGroupsColors[i] == "white":
+            JoueurBlancCaptured.config(text=f"{float(JoueurBlancCaptured.cget('text')) + len(emptyPoints[i])}")
+
 
 
 def Skip_Turn():
@@ -237,8 +256,6 @@ def motion(event):
     if type(ThickLineH) == int and gameZoneCanvas.coords(ThickLineH)[1] != lineY:
         gameZoneCanvas.coords(ThickLineH, screen_width * 0.405 - BoardSize / 2 + (BoardSize) / (nb + 1), lineY, screen_width * 0.405 + BoardSize / 2 - (BoardSize) / (nb + 1), lineY)
         gameZoneCanvas.itemconfig(ThickLineH, state="normal")
-def onHuDCanvasClick(event):
-    print("click abscisse :",event.x, "click ordonnée :", event.y)
 
 def on_Window_Resize(event):
     global Window_height, Window_width
@@ -281,7 +298,6 @@ def Draw_Window(InputNb):
 
     HuDCanvas = tkinter.Canvas(mainWindow, height=screen_height*0.95, width=screen_width*0.19, bg="#a84d11", bd=-2)
     HuDCanvas.grid(column=2, row=1, padx=0,pady=0, sticky="nswe")
-    #HuDCanvas.bind("<Button-1>", onHuDCanvasClick)
     HuDCanvasWidth = int(HuDCanvas.cget('width'))
     HuDCanvasHeight = int(HuDCanvas.cget('height'))
     JoueurNoirVisual = HuDCanvas.create_oval(HuDCanvasWidth*0.2, HuDCanvasHeight*0.05, HuDCanvasWidth*0.4, HuDCanvasHeight*0.05 + HuDCanvasWidth*0.2, fill="black", outline="red", width=5)
