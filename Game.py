@@ -272,7 +272,7 @@ def Draw_Window(InputNb):
     #création de la fenetre
     mainWindow = Tk()
     mainWindow.attributes("-fullscreen", True)
-    #mainWindow.attributes("-topmost", True)
+    mainWindow.attributes("-topmost", True)
     mainWindow.update()
     sleep(0.1)
     screen_width = mainWindow.winfo_width()
