@@ -39,7 +39,7 @@ BoardSizeSelectorList.append(Radiobutton(PlayCanvas, text="9x9", variable=var, v
 
 for i in range(len(BoardSizeSelectorList)):
     BoardSizeSelectorList[i].pack(side="bottom")
-BoardSize = 13
+BoardSize = 9
 BoardSizeSelectorList[2].select()
 PlayCanvas.pack(side="left", fill="y")
 

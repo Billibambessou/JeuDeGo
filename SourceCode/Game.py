@@ -73,11 +73,13 @@ def Board_Check():
     list_of_groupsLiberties.clear()
     for i in range(1, len(list_of_groups)):
         list_of_groupsLiberties.append(Sum_Of_a_Group_Liberties(i))
+    groups_to_remove = []
     for i in range(len(list_of_groupsLiberties)):
         if list_of_groupsLiberties[i] == 0 and not LastStonePlaced in list_of_groups[i]:
-            print(i, list_of_groups[i])
-            if len(list_of_groups)>= i+1:
-                SupprimerGroupe(i+1)
+            if len(list_of_groups) >= i + 1:
+                groups_to_remove.append(i - len(groups_to_remove) + 1)
+    for group_index in groups_to_remove:
+        SupprimerGroupe(group_index)
 
 def Get_rid_of_Dead_Liberties(tempLiberties):
     #vérifier si une libertée est prise.
