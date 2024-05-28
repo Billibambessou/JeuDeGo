@@ -25,10 +25,16 @@ The Go is an abstract strategy board game for two players, in which the aim is t
 + Ending the Game: Players can skip their turn any time : if both players skip their turn, the game end.
 + Scoring: The player with the larger total of territory nodes and captured stones is the winner.
 
-### Resources
+Enjoy the game!
+
+
+## Resources
 For more detailed rules, strategies, and variations of the game, please refer to the following resources:
 + [Masters of Games](https://www.mastersofgames.com/rules/go-rules.htm)
 + [Wikipedia](https://en.wikipedia.org/wiki/Rules_of_Go)
 + [British Go Association](https://www.britgo.org/intro/intro2.html)
 
-Enjoy the game!
+## Acknowledgements
+
+This project wouldn't have been possible without the help and support of:
+- [@Troupote](https://github.com/Troupote) - for their invaluable insights and contributions to the project.
